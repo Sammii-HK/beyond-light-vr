@@ -48,35 +48,35 @@ const QUOTES = [
 
 function makeTextCanvas(quote) {
   const W = 2048;
-  const H = quote.lines.length > 4 ? 900 : 700;
+  const H = 1024;
   const canvas = document.createElement('canvas');
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext('2d');
 
-  // Black background
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, W, H);
 
-  // Quote lines
   ctx.fillStyle = '#fff';
   ctx.textAlign = 'center';
 
-  const lineHeight = H / (quote.lines.length + (quote.author ? 3 : 2));
-  let y = lineHeight * 1.2;
+  const fontSize = 46;
+  const lineHeight = fontSize * 1.65;
 
-  // Main text
-  const fontSize = Math.min(72, Math.floor(lineHeight * 0.7));
-  ctx.font = `italic ${fontSize}px Georgia, serif`;
+  // Vertically centre the whole block on the canvas
+  const authorLines = quote.author ? 1 : 0;
+  const totalHeight = (quote.lines.length + authorLines) * lineHeight;
+  let y = (H - totalHeight) / 2 + lineHeight * 0.8;
+
+  ctx.font = `500 ${fontSize}px "Futura PT", Futura, "Century Gothic", "Trebuchet MS", sans-serif`;
 
   for (const line of quote.lines) {
     ctx.fillText(line, W / 2, y);
     y += lineHeight;
   }
 
-  // Author attribution
   if (quote.author) {
-    ctx.font = `${Math.floor(fontSize * 0.55)}px Georgia, serif`;
+    ctx.font = `400 ${Math.floor(fontSize * 0.58)}px "Futura PT", Futura, "Century Gothic", "Trebuchet MS", sans-serif`;
     ctx.fillStyle = 'rgba(255,255,255,0.6)';
     y += lineHeight * 0.3;
     ctx.fillText(quote.author, W / 2, y);
@@ -123,7 +123,7 @@ export function createQuoteMeshes(scene, roomSize = 10) {
 
     // Aspect ratio of the canvas
     const aspect = canvas.width / canvas.height;
-    const planeW = roomSize * 0.82;
+    const planeW = roomSize * 0.45;
     const planeH = planeW / aspect;
 
     const geometry = new THREE.PlaneGeometry(planeW, planeH);

@@ -1,49 +1,56 @@
 import * as THREE from 'three';
+import vertexShader from './shaders/wall.vert?raw';
+import fragmentShader from './shaders/wall.frag?raw';
 
-export function createRoom(scene, size = 10) {
-  // Inside-out box — we're standing inside it
-  const geometry = new THREE.BoxGeometry(size, size, size);
+// Room is 6 units wide — matches quote placement in quotes.js
+const ROOM_SIZE = 14;
+const HALF = ROOM_SIZE / 2;
 
-  const material = new THREE.MeshStandardMaterial({
-    color: 0x050508,
-    side: THREE.BackSide,
-    roughness: 0.95,
-    metalness: 0.0,
+let _scene = null;
+const _wallMeshes = [];
+
+function makeWallMaterial() {
+  return new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader,
+    uniforms: {
+      u_color: { value: new THREE.Color() },
+    },
   });
-
-  const room = new THREE.Mesh(geometry, material);
-  scene.add(room);
-  return room;
 }
 
-export function createLighting(scene) {
-  // Ambient — very low base level, changes colour with phase
-  const ambient = new THREE.AmbientLight(0x000000, 0.3);
-  scene.add(ambient);
+export function createRoom(scene) {
+  _scene = scene;
 
-  // Main point light in center — this is the "light source" of each spectrum phase
-  const point = new THREE.PointLight(0x000000, 0, 20, 1.5);
-  point.position.set(0, 0, 0);
-  scene.add(point);
+  // 6 faces — each a PlaneGeometry facing inward
+  const faces = [
+    { pos: [0, 0, -HALF], rot: [0, 0, 0] },                   // front
+    { pos: [0, 0,  HALF], rot: [0, Math.PI, 0] },             // back
+    { pos: [-HALF, 0, 0], rot: [0,  Math.PI / 2, 0] },        // left
+    { pos: [ HALF, 0, 0], rot: [0, -Math.PI / 2, 0] },        // right
+    { pos: [0,  HALF, 0], rot: [ Math.PI / 2, 0, 0] },        // ceiling
+    { pos: [0, -HALF, 0], rot: [-Math.PI / 2, 0, 0] },        // floor
+  ];
 
-  // Subtle fill from above — gives depth to the room
-  const fill = new THREE.PointLight(0x000000, 0, 12, 2);
-  fill.position.set(0, 3.5, 0);
-  scene.add(fill);
-
-  return { ambient, point, fill };
+  for (const { pos, rot } of faces) {
+    const geo = new THREE.PlaneGeometry(ROOM_SIZE, ROOM_SIZE);
+    const mat = makeWallMaterial();
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(...pos);
+    mesh.rotation.set(...rot);
+    scene.add(mesh);
+    _wallMeshes.push(mesh);
+  }
 }
 
-export function updateRoom(lights, phaseState) {
-  const { color, intensity } = phaseState;
-  const c = new THREE.Color(color.r, color.g, color.b);
+export function updateRoom(phaseState) {
+  if (!_scene) return;
+  const { color, fogColor } = phaseState;
 
-  lights.ambient.color.copy(c);
-  lights.ambient.intensity = intensity * 0.25;
+  _scene.background.setRGB(color.r, color.g, color.b);
+  _scene.fog.color.setRGB(fogColor.r, fogColor.g, fogColor.b);
 
-  lights.point.color.copy(c);
-  lights.point.intensity = intensity * 2.8;
-
-  lights.fill.color.copy(c);
-  lights.fill.intensity = intensity * 0.6;
+  for (const mesh of _wallMeshes) {
+    mesh.material.uniforms.u_color.value.setRGB(color.r, color.g, color.b);
+  }
 }
