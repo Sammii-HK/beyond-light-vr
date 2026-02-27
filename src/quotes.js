@@ -58,10 +58,11 @@ function makeTextCanvas(quote) {
   ctx.fillRect(0, 0, W, H);
 
   ctx.fillStyle = '#fff';
-  ctx.textAlign = 'center';
+  ctx.textAlign = 'left';
 
   const fontSize = 46;
   const lineHeight = fontSize * 1.65;
+  const margin = W * 0.1;
 
   // Vertically centre the whole block on the canvas
   const authorLines = quote.author ? 1 : 0;
@@ -71,7 +72,7 @@ function makeTextCanvas(quote) {
   ctx.font = `500 ${fontSize}px "Futura PT", Futura, "Century Gothic", "Trebuchet MS", sans-serif`;
 
   for (const line of quote.lines) {
-    ctx.fillText(line, W / 2, y);
+    ctx.fillText(line, margin, y);
     y += lineHeight;
   }
 
@@ -79,7 +80,7 @@ function makeTextCanvas(quote) {
     ctx.font = `400 ${Math.floor(fontSize * 0.58)}px "Futura PT", Futura, "Century Gothic", "Trebuchet MS", sans-serif`;
     ctx.fillStyle = 'rgba(255,255,255,0.6)';
     y += lineHeight * 0.3;
-    ctx.fillText(quote.author, W / 2, y);
+    ctx.fillText(quote.author, margin, y);
   }
 
   return canvas;
