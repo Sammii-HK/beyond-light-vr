@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beyond Light</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; overflow: hidden; }
+    canvas { display: block; }
+
+    #ui {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 48px;
+      gap: 16px;
+    }
+
+    #phase-label {
+      font-family: 'Georgia', serif;
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.25);
+      transition: color 2s ease;
+    }
+
+    #advance-btn {
+      pointer-events: all;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.3);
+      padding: 10px 32px;
+      font-family: 'Georgia', serif;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+    #advance-btn:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      color: rgba(255, 255, 255, 0.6);
+    }
+    #advance-btn.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #vr-btn-container {
+      pointer-events: all;
+    }
+
+    #look-hint {
+      font-family: 'Georgia', serif;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: rgba(255, 255, 255, 0.15);
+      text-transform: uppercase;
+      transition: opacity 2s ease;
+    }
+    #look-hint.fade {
+      opacity: 0;
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/index-wMdxh7mf.js"></script>
+</head>
+<body>
+  <div id="ui">
+    <div id="look-hint">drag to look around</div>
+    <div id="phase-label">infrared</div>
+    <button id="advance-btn">advance →</button>
+    <div id="vr-btn-container"></div>
+  </div>
+</body>
+</html>
